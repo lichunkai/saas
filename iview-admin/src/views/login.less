@@ -1,0 +1,89 @@
+.login-con .ivu-select-single .ivu-select-selection{
+	height: 38px
+}
+.login-con .ivu-select-input,
+.login-con .ivu-input,
+.login-con .ivu-form-item-content,
+.login-con .ivu-btn-primary{
+	height: 38px;
+}
+
+
+.xieyiModal .ivu-modal-body,
+.yinsiModal .ivu-modal-body{
+	max-height: 560px;
+	overflow-y: auto
+}
+.xieyiModal p,
+.yinsiModal p{
+	line-height: 24px;
+	font-size: 14px;
+	padding-left: 5px
+}
+.xieyititle{
+	font-weight: bold;
+	margin-top: 10px;
+	color: #000;
+	padding-left: 0 !important;
+}
+.xieyititle-text{
+	padding-left: 20px !important
+}
+
+*{
+-moz-user-select: none; /*火狐*/
+-webkit-user-select: none; /*webkit浏览器*/
+-ms-user-select: none; /*IE10*/
+-khtml-user-select: none; /*早期浏览器*/
+user-select: none;
+}
+.login-image{
+	width: 100%
+	}
+.login-image img{
+	margin: 0 auto 20px auto;
+	display: block
+}
+.login{
+    width: 100%;
+    height: 100vh;
+	background-image: url('/src/images/login.png');
+    background-size: 100% 100%;
+    background-position: center;
+    position: relative;	
+    &-con{
+        position: absolute;
+        right: 20%;
+        top: 50%;
+        transform: translateY(-60%);
+        width: 366px;
+        &-header{
+            font-size: 16px;
+            font-weight: 300;
+            text-align: center;
+            padding: 30px 0;
+        }
+        .form-con{
+            padding: 16px 16px;
+        }
+        .login-tip{
+            font-size: 10px;
+            text-align: right;
+            color: #c3c3c3;
+        }
+        .register{
+            font-size: 12px;
+            text-align: right;
+            color: #999 !important;
+            margin: 30px 0 15px 0;
+            cursor: pointer;
+			text-decoration: underline
+        }
+        .register a{
+            font-size: 12px;
+            text-align: right;
+            color: #2d8cf0;
+            padding: 15px 0;
+        }
+    }
+}

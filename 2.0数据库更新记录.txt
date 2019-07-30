@@ -1,0 +1,1008 @@
+﻿一.新增数据表
+1.zh_setting_finance 财务平台-分成配置
+---------------------------------------------------------------------------------------
+CREATE TABLE `zh_setting_finance` (
+  `finance_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '普通配置ID',
+  `finance_shorthand` varchar(100) DEFAULT NULL COMMENT '普通配置简写，英文',
+  `finance_name` varchar(100) DEFAULT NULL COMMENT '普通配置名',
+  `finance_desp` text COMMENT '普通配置描述JSON格式',
+  `ctime` datetime DEFAULT NULL COMMENT '添加时间',
+  `utime` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`finance_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COMMENT='财务平台-分成设置';
+---------------------------------------------------------------------------------------
+2.zh_setting_transfer 财务平台-过户流程
+---------------------------------------------------------------------------------------
+CREATE TABLE `zh_setting_transfer` (
+  `transfer_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '普通配置ID',
+  `transfer_name` varchar(100) DEFAULT '' COMMENT '过户流程名称',
+  `transfer_owner_materials` text COMMENT '业主材料明细(JSON格式)',
+  `transfer_customer_materials` text COMMENT '客户材料明细(JSON格式)',
+  `transfer_process` text COMMENT '过户流程配置(JSON格式)',
+  `ctime` datetime DEFAULT NULL COMMENT '添加时间',
+  `utime` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`transfer_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COMMENT='财务平台-过户流程';
+---------------------------------------------------------------------------------------
+3.zh_order_sell_collection 成交管理-代收代付记录表
+---------------------------------------------------------------------------------------
+CREATE TABLE `zh_order_sell_collection` (
+  `collection_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `order_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单id',
+  `collection_no` varchar(50) DEFAULT '' COMMENT '票据号',
+  `collection_type` tinyint(5) DEFAULT '0' COMMENT '费用类型1代收类型2代付类型',
+  `collection_purpose` varchar(30) DEFAULT '' COMMENT '费用用途',
+  `collection_way` varchar(20) DEFAULT '' COMMENT '支付方式',
+  `collection_money` decimal(10,2) DEFAULT '0.00' COMMENT '代收代付金额',
+  `collection_payer` tinyint(5) DEFAULT '0' COMMENT '付费人/收取人 1业主2客户',
+  `collection_day` date DEFAULT '0000-00-00' COMMENT '收款日期',
+  `collection_remark` varchar(255) DEFAULT '' COMMENT '收费备注',
+  `collection_reason` varchar(255) DEFAULT '' COMMENT '反驳原因',
+  `collection_status` tinyint(5) DEFAULT '0' COMMENT '记录状态0未确认1确认2驳回',
+  `c_id` int(11) DEFAULT NULL,
+  `u_id` int(11) DEFAULT NULL,
+  `ctime` datetime DEFAULT NULL,
+  `utime` datetime DEFAULT NULL,
+  `is_del` tinyint(255) DEFAULT NULL,
+  PRIMARY KEY (`collection_id`),
+  KEY `order_id` (`order_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='用户成交代收代付收取记录表';
+---------------------------------------------------------------------------------------
+4.zh_order_sell_cost 成交管理-佣金杂项收入记录表
+---------------------------------------------------------------------------------------
+CREATE TABLE `zh_order_sell_cost` (
+  `cost_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `order_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单id',
+  `cost_type` tinyint(5) DEFAULT '0' COMMENT '费用类型1佣金类型2杂项类型',
+  `cost_purpose` tinyint(5) DEFAULT '0' COMMENT '费用用途1收入2支出',
+  `cost_project` varchar(50) DEFAULT '' COMMENT '费用项目',
+  `cost_payer` tinyint(5) DEFAULT '0' COMMENT '缴费人1业主2客户',
+  `cost_way` varchar(20) DEFAULT '' COMMENT '支付方式',
+  `cost_money` decimal(10,2) DEFAULT '0.00' COMMENT '收取金额',
+  `cost_day` date DEFAULT '0000-00-00' COMMENT '收款日期',
+  `cost_remark` varchar(255) DEFAULT '' COMMENT '收费备注',
+  `cost_reason` varchar(255) DEFAULT '' COMMENT '反驳原因',
+  `cost_status` tinyint(5) DEFAULT '0' COMMENT '记录状态0未确认1确认2驳回',
+  `c_id` int(11) DEFAULT NULL,
+  `u_id` int(11) DEFAULT NULL,
+  `ctime` datetime DEFAULT NULL,
+  `utime` datetime DEFAULT NULL,
+  `is_del` tinyint(255) DEFAULT NULL,
+  PRIMARY KEY (`cost_id`),
+  KEY `order_id` (`order_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COMMENT='用户成交佣金收取记录表';
+
+---------------------------------------------------------------------------------------
+5.zh_order_sell_divide 成交管理-佣金化成记录表
+---------------------------------------------------------------------------------------
+CREATE TABLE `zh_order_sell_divide` (
+  `divide_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `order_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单id',
+  `commission_id` int(11) DEFAULT '0' COMMENT '对应的分成用户比例',
+  `cost_id` tinyint(5) DEFAULT '0' COMMENT '佣金费用记录id',
+  `divide_money` int(10) DEFAULT '0' COMMENT '费用用途1收入2支出',
+  `c_id` int(11) DEFAULT NULL,
+  `u_id` int(11) DEFAULT NULL,
+  `ctime` datetime DEFAULT NULL,
+  `utime` datetime DEFAULT NULL,
+  `is_del` tinyint(255) DEFAULT NULL,
+  PRIMARY KEY (`divide_id`),
+  KEY `order_id` (`order_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COMMENT='用户成交佣金划成记录表';
+
+---------------------------------------------------------------------------------------
+6.zh_order_sell_procedure 成交管理-过户流程记录表
+---------------------------------------------------------------------------------------
+CREATE TABLE `zh_order_sell_procedure` (
+  `procedure_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `order_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单id',
+  `procedure_name` varchar(50) DEFAULT '' COMMENT '流程名称',
+  `procedure_expect_day` date DEFAULT '0000-00-00' COMMENT '流程预计时间',
+  `procedure_finish_day` date DEFAULT '0000-00-00' COMMENT '完成时间',
+  `procedure_status` tinyint(5) DEFAULT '0' COMMENT '记录状态0未完成1已完成',
+  `c_id` int(11) DEFAULT NULL,
+  `u_id` int(11) DEFAULT NULL,
+  `ctime` datetime DEFAULT NULL,
+  `utime` datetime DEFAULT NULL,
+  `is_del` tinyint(255) DEFAULT NULL,
+  PRIMARY KEY (`procedure_id`),
+  KEY `order_id` (`order_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COMMENT='用户成交流程记录表';
+
+---------------------------------------------------------------------------------------
+7.zh_edu_category  培训-培训分类表
+---------------------------------------------------------------------------------------
+CREATE TABLE `zh_edu_category` (
+  `edu_c_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '分类ID',
+  `edu_c_type` varchar(255) DEFAULT NULL COMMENT '分类',
+  `edu_c_title` varchar(255) DEFAULT NULL COMMENT 'title',
+  `edu_c_start` int(11) DEFAULT NULL COMMENT '开始天数',
+  `edu_c_end` int(11) DEFAULT NULL COMMENT '结束天数',
+  `edu_c_img` varchar(255) DEFAULT NULL,
+  `auth_cid` int(11) DEFAULT NULL,
+  `c_id` int(11) DEFAULT NULL COMMENT '添加人',
+  `u_id` int(11) DEFAULT NULL COMMENT '更新人',
+  `ctime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '添加时间',
+  `utime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `auth_uid` int(11) DEFAULT NULL COMMENT '用户ID',
+  `auth_rid` int(11) DEFAULT NULL COMMENT '组ID',
+  `auth_sid` int(11) DEFAULT NULL COMMENT '店ID',
+  `auth_aid` int(11) DEFAULT NULL COMMENT '区ID',
+  `auth_baid` int(11) DEFAULT NULL COMMENT '大区ID',
+  `is_del` tinyint(4) DEFAULT NULL COMMENT '是否删除',
+  PRIMARY KEY (`edu_c_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='培训文章分类表';
+------------------------------------------------------------------------------------------
+8.zh_edu 培训-培训表
+------------------------------------------------------------------------------------------
+CREATE TABLE `zh_edu` (
+  `edu_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '培训ID',
+  `edu_c_id` int(11) DEFAULT NULL COMMENT '培训分类ID',
+  `edu_title` varchar(255) DEFAULT NULL COMMENT '培训标题',
+  `edu_content` text COMMENT '培训内容',
+  `edu_img` varchar(255) DEFAULT NULL COMMENT '图片',
+  `c_id` int(11) DEFAULT NULL COMMENT '添加人',
+  `u_id` int(11) DEFAULT NULL COMMENT '更新人',
+  `ctime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '添加时间',
+  `utime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `auth_uid` int(11) DEFAULT NULL COMMENT '用户ID',
+  `auth_rid` int(11) DEFAULT NULL COMMENT '组ID',
+  `auth_sid` int(11) DEFAULT NULL COMMENT '店ID',
+  `auth_aid` int(11) DEFAULT NULL COMMENT '区ID',
+  `auth_baid` int(11) DEFAULT NULL COMMENT '大区ID',
+  `is_del` tinyint(4) DEFAULT NULL COMMENT '是否删除',
+  PRIMARY KEY (`edu_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-------------------------------------------------------------------------------------
+9.zh_edu_file 培训-培训附件表
+-------------------------------------------------------------------------------------
+CREATE TABLE `zh_edu_file` (
+  `edu_file_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '文件ID',
+  `edu_id` int(11) DEFAULT NULL COMMENT '培训ID',
+  `edu_file_url` varchar(255) DEFAULT NULL COMMENT '文件URL',
+  `edu_file_name` varchar(255) DEFAULT NULL COMMENT '文件名称',
+  `edu_file_size` double DEFAULT NULL COMMENT '文件大小',
+  `c_id` int(11) DEFAULT NULL COMMENT '添加人',
+  `u_id` int(11) DEFAULT NULL COMMENT '更新人',
+  `ctime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '添加时间',
+  `utime` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `auth_uid` int(11) DEFAULT NULL COMMENT '用户ID',
+  `auth_rid` int(11) DEFAULT NULL COMMENT '组ID',
+  `auth_sid` int(11) DEFAULT NULL COMMENT '店ID',
+  `auth_aid` int(11) DEFAULT NULL COMMENT '区ID',
+  `auth_baid` int(11) DEFAULT NULL COMMENT '大区ID',
+  `is_del` tinyint(4) DEFAULT NULL COMMENT '是否删除',
+  PRIMARY KEY (`edu_file_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-------------------------------------------------------------------------------------
+10.oa_kaoqing_user_setting 考勤-员工排班表
+-------------------------------------------------------------------------------------
+CREATE TABLE `oa_kaoqing_user_setting` (
+`kq_user_id`  int UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '考勤员工设置ID' ,
+`kq_tp_id`  int NULL COMMENT '模板ID' ,
+`d_id`  int NULL COMMENT '部门ID' ,
+`u_id`  int NULL COMMENT '员工ID' ,
+`kq_date`  date NULL COMMENT '排班日期' ,
+`kq_md`  varchar(20) NULL COMMENT '日期' ,
+`kq_st`  varchar(20) NULL COMMENT '上班开始时间' ,
+`kq_ed`  varchar(20) NULL COMMENT '下班时间' ,
+`ctime`  datetime NULL COMMENT '删除时间' ,
+`utime`  datetime NULL COMMENT '修改时间' ,
+PRIMARY KEY (`kq_user_id`)
+)
+
+-------------------------------------------------------------------------------------
+
+二.更新数据表
+--1.zh_order_sell_commission 成交管理-用户佣金分成比例表
+--------------------------------------------------------------------------------------
+CREATE TABLE `zh_order_sell_commission` (
+  `oc_id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `order_id` int(11) DEFAULT '0' COMMENT '订单id',
+  `depart_id` int(11) DEFAULT '0' COMMENT '部门id',
+  `depart_name` varchar(50) DEFAULT '' COMMENT '部门名称',
+  `user_job` varchar(50) DEFAULT '' COMMENT '用户职位',
+  `user_id` int(11) DEFAULT NULL COMMENT '用户id',
+  `user_name` varchar(50) DEFAULT '' COMMENT '用户名称',
+  `reason` varchar(50) CHARACTER SET utf8 DEFAULT '' COMMENT '参与分成原因',
+  `divide_per` int(10) DEFAULT '0' COMMENT '分成比例',
+  `c_id` int(11) DEFAULT NULL,
+  `u_id` int(11) DEFAULT NULL,
+  `ctime` datetime DEFAULT NULL,
+  `utime` datetime DEFAULT NULL,
+  `is_del` tinyint(255) DEFAULT NULL,
+  PRIMARY KEY (`oc_id`),
+  KEY `order_id` (`order_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8mb4 COMMENT='员工成交佣金分成比例表';
+-------------------------------------------------------------------------------------------
+
+--2.zh_house 添加字段 is_yaoshi_user，is_dujia_user，is_images_user
+--------------------------------------------------------------------------------------
+ALTER TABLE `zh_house`
+ADD COLUMN `is_yaoshi_user`  int(11) NULL DEFAULT 0 COMMENT '得钥匙用户id' AFTER `czend_date`,
+ADD COLUMN `is_dujia_user`  int(11) NULL DEFAULT 0 COMMENT '委托人' AFTER `is_yaoshi_user`,
+ADD COLUMN `is_images_user`  int(11) NULL DEFAULT 0 COMMENT '图片人' AFTER `is_dujia_user`;
+ADD COLUMN `online_show`  tinyint(4) NULL DEFAULT 0 COMMENT '是否推送到外网' AFTER `house_private`;
+--------------------------------------------------------------------------------------
+--3.zh_order_sell 
+删除字段：order_commission
+添加字段：order_owner_commission，order_customer_commission，order_linkage_did，order_linkage_user，order_linkage_username，order_linkage_per，order_consult_did，order_consult_user，order_consult_username，order_consult_per，order_transfer_id，order_transfer_process
+--------------------------------------------------------------------------------------
+ALTER TABLE `zh_order_sell`
+DROP COLUMN `order_commission`,
+ADD COLUMN `order_owner_commission`  decimal(10,2) NULL DEFAULT 0.00 COMMENT '业主应收佣金' AFTER `order_loan`,
+ADD COLUMN `order_customer_commission`  decimal(10,2) NULL DEFAULT 0.00 COMMENT '客户应收佣金' AFTER `order_owner_commission`,
+ADD COLUMN `order_linkage_did`  int(10) NULL DEFAULT 0 COMMENT '联动划成人的部门' AFTER `is_del`,
+ADD COLUMN `order_linkage_user`  int(11) NULL DEFAULT 0 COMMENT '联动划成人' AFTER `order_linkage_did`,
+ADD COLUMN `order_linkage_username`  varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '联动划成人姓名' AFTER `order_linkage_user`,
+ADD COLUMN `order_linkage_per`  tinyint(5) NULL DEFAULT 0 COMMENT '联成划成比例' AFTER `order_linkage_username`,
+ADD COLUMN `order_consult_did`  int(10) NULL DEFAULT 0 COMMENT '协商划成人的部门' AFTER `order_linkage_per`,
+ADD COLUMN `order_consult_user`  int(11) NULL DEFAULT 0 COMMENT '协商划成人' AFTER `order_consult_did`,
+ADD COLUMN `order_consult_username`  varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '协商划成人姓名' AFTER `order_consult_user`,
+ADD COLUMN `order_consult_per`  tinyint(5) NULL DEFAULT 0 COMMENT '协商划成人比例' AFTER `order_consult_username`,
+ADD COLUMN `order_transfer_id`  int(10) NULL DEFAULT 0 COMMENT '过户流程id' AFTER `order_consult_per`,
+ADD COLUMN `order_transfer_process`  varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '过户流程名称' AFTER `order_transfer_id`;
+ADD COLUMN `contract_image`  text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '签约值图片' AFTER `order_transfer_process`;
+ADD COLUMN `auth_ruid`  int(11) NULL DEFAULT 0 COMMENT '组负责人iD' AFTER `auth_rid`;
+ADD COLUMN `auth_suid`  int(11) NULL DEFAULT 0 COMMENT '店负责人iD' AFTER `auth_sid`;
+ADD COLUMN `auth_auid`  int(11) NULL DEFAULT 0 COMMENT '区负责人iD' AFTER `auth_aid`;
+ADD COLUMN `auth_bauid`  int(11) NULL DEFAULT 0 COMMENT '大区负责人iD' AFTER `auth_baid`;
+ADD COLUMN `order_deal_type`  tinyint(5) NULL DEFAULT 0 COMMENT '交易类型：1本公司自有2合作房源3合作客源4代办过户' AFTER `order_status_remark`;
+
+
+---------------------------------------------------------------------------------------
+
+--2.zh_customer_xiading 添加字段 pay_way，reject_reason，image
+--------------------------------------------------------------------------------------
+ALTER TABLE `zh_customer_xiading`
+ADD COLUMN `pay_way`  varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '支付方式' AFTER `piaojuhao`,
+ADD COLUMN `image`  text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '费用凭证图片' AFTER `yujichengjiao`;
+ADD COLUMN `reject_reason`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '反驳原因' AFTER `x_zhuangtai`;
+----------------------------------------------------------------------------------------
+--2.zh_order_sell_collection 添加字段 house_id,xiading_id,xiading_status,xiading_contractno
+--------------------------------------------------------------------------------------
+ALTER TABLE `zh_order_sell_collection`
+ADD COLUMN `house_id`  int(11) NULL DEFAULT 0 COMMENT '房源id' AFTER `order_id`;
+ADD COLUMN `xiading_id`  int(11) NULL DEFAULT 0 COMMENT '下定id' AFTER `house_id`,
+ADD COLUMN `xiading_status`  tinyint(5) NULL DEFAULT 0 COMMENT '意向金管理将要变更的状态' AFTER `xiading_id`,
+ADD COLUMN `xiading_contractno`  varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '协议书' AFTER `xiading_status`;
+
+----------------------------------------------------------------------------------------
+--4.zh_house_followup 添加字段chedan
+----------------------------------------------------------------------------------------
+ALTER TABLE `zh_house_followup`
+ADD COLUMN `chedan`  varchar(255) NULL COMMENT '撤单原因' AFTER `hf_notify_is_chedan`
+
+----------------------------------------------------------------------------------------
+--4.zh_house_followup 添加字段chedan
+----------------------------------------------------------------------------------------
+ALTER TABLE `zh_house_weituo`
+ADD COLUMN `hw_invalid_did`  int(11) NULL DEFAULT 0 COMMENT '失效人部门' AFTER `hw_end_time`,
+ADD COLUMN `hw_invalid_dname`  varchar(30) NULL AFTER `hw_invalid_did`,
+ADD COLUMN `hw_invalid_uid`  int(11) NULL DEFAULT 0 COMMENT '失效人id' AFTER `hw_invalid_dname`
+ADD COLUMN `hw_invalid_uname`  varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '失效用户名' AFTER `hw_invalid_uid`
+ADD COLUMN `hw_invalid_reason`  varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '失效原因' AFTER `hw_invalid_uname`
+ADD COLUMN `hw_invalid_remark`  varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '失效备注' AFTER `hw_invalid_reason`
+----------------------------------------------------------------------------------------
+
+--4.zh_house_log 更新hl_type备注
+----------------------------------------------------------------------------------------
+ALTER TABLE `zh_house_log`
+MODIFY COLUMN `hl_type`  int(11) NULL DEFAULT NULL COMMENT '日志类型（1=修改信息 2=变更状态 3=上传照片 4=公盘转私盘 5=私盘转公盘 6=设为主推 7=写跟进  8=写提醒 9=封盘  10=举报  11=修改价格 12=添加电话  13=查看电话  14=查看底价 15=修改业主 16=分享房源）' AFTER `hl_id`;
+----------------------------------------------------------------------------------------
+
+三、插入数据
+----------------------------------------------------------------------------------------
+INSERT INTO `zh_setting_juece` (`jsetting_id`, `jsetting_shorthand`, `jsetting_type`, `jsetting_name`, `jsetting_desp`, `val_type`, `val`, `ctime`, `utime`) VALUES ('99', 'baoliuhetongshuliang', '其他', '门店保留合同数量', '每个门店可以保留{$val}份合同', 'text;', '1', '2018-06-27 14:14:43', '2018-06-27 14:14:46');
+<<<<<<< .mine
+
+
+
+
+-------------------------------------------------------------------------------------------------------
+SET FOREIGN_KEY_CHECKS=0;
+CREATE TABLE `oa_hr_biandong` (
+`hr_bd_id`  int(11) NOT NULL AUTO_INCREMENT COMMENT '变动ID' ,
+`staff_id`  int(11) NULL DEFAULT NULL COMMENT '员工ID' ,
+`biandongleixing`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '变动类型' ,
+`yx_role_id`  int(11) NULL DEFAULT NULL COMMENT '原职务' ,
+`yx_d_id`  int(11) NULL DEFAULT NULL COMMENT '原部门' ,
+`bd_role_id`  int(11) NULL DEFAULT NULL COMMENT '变动职务(角色)' ,
+`bd_d_id`  int(11) NULL DEFAULT NULL COMMENT '变动部门' ,
+`bd_date`  date NULL DEFAULT NULL COMMENT '变动日期' ,
+`biandongyuanyin`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '变动原因' ,
+`c_id`  int(11) NULL DEFAULT NULL COMMENT '添加人' ,
+`ctime`  datetime NULL DEFAULT NULL COMMENT '添加时间' ,
+`is_del`  tinyint(4) NULL DEFAULT NULL COMMENT '0表示不删除，1表示删除' ,
+PRIMARY KEY (`hr_bd_id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+ROW_FORMAT=Dynamic
+;
+CREATE TABLE `oa_hr_staff` (
+`hr_id`  int(11) NOT NULL AUTO_INCREMENT COMMENT '记录ID' ,
+`staff_id`  int(11) NULL DEFAULT NULL COMMENT '员工ID' ,
+`staff_name`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '员工姓名' ,
+`staff_no`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '员工编号' ,
+`d_id`  int(11) NULL DEFAULT NULL COMMENT '部门ID' ,
+`sex`  tinyint(1) NULL DEFAULT NULL COMMENT '性别' ,
+`alias`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '昵称' ,
+`age`  tinyint(2) NULL DEFAULT NULL COMMENT '年龄' ,
+`mingzu`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '民族' ,
+`jiguan`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '籍贯' ,
+`xueli`  varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '学历' ,
+`hunyin`  varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '婚姻' ,
+`hukou`  varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '户口' ,
+`zhengzhimianmao`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '政治面貌' ,
+`youzheng`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '邮政编码' ,
+`birthday`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '出生日期' ,
+`shenfenzheng`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '身份证号' ,
+`ruzhishijian`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '入职日期' ,
+`lianxifangshi`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '联系方式' ,
+`suoshubumen`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '所属部门' ,
+`zhiwu`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '职务' ,
+`fenguanneirong`  varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '分管内容' ,
+`jinjilianxiren`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '紧急联系人' ,
+`jinjilianxirenphone`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '紧急联系人电话' ,
+`zhaopinqudao`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '招聘渠道' ,
+`hetongzhuangtai`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '合同状态' ,
+`toubaozhuangtai`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '投保状态' ,
+`zhuanzhengshijian`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '转正时间' ,
+`yinhangkahao`  varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '银行卡号' ,
+`jiatingzhuzhi`  varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '家庭住址' ,
+`xianzhuzhi`  varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '现住址' ,
+`gexingqianming`  varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '个性签名' ,
+`c_id`  int(11) NULL DEFAULT NULL COMMENT '添加人' ,
+`u_id`  int(11) NULL DEFAULT NULL COMMENT '修改人' ,
+`ctime`  datetime NULL DEFAULT NULL COMMENT '添加时间' ,
+`utime`  datetime NULL DEFAULT NULL COMMENT '修改时间' ,
+`is_del`  tinyint(1) NULL DEFAULT NULL COMMENT '0表示不删除，1表示删除' ,
+PRIMARY KEY (`hr_id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+ROW_FORMAT=Dynamic
+;
+CREATE TABLE `oa_kaoqing_guanli` (
+`kq_mg_id`  int(11) NOT NULL AUTO_INCREMENT COMMENT '考勤管理ID' ,
+`staff_id`  int(11) NULL DEFAULT NULL COMMENT '员工ID' ,
+`d_id`  int(11) NULL DEFAULT NULL COMMENT '部门ID' ,
+`kq_date`  date NULL DEFAULT NULL COMMENT '日期' ,
+`status`  varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '状态' ,
+`tp_name`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '模板名称' ,
+`df_st`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '默认上班时间' ,
+`df_ed`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '默认下班时间' ,
+`sj_st`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '实际上班时间' ,
+`sj_ed`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '实际下班时间' ,
+`remark`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注' ,
+`flag`  tinyint(4) NULL DEFAULT NULL COMMENT '0:未打卡,1:上班未打卡,2:下班未打卡,3:迟到下班未打卡,4:上班未打卡早退,5:迟到,6:迟到早退,7:早退,8:休息,9:正常' ,
+`u_id`  int(11) NULL DEFAULT NULL COMMENT '修改考勤人' ,
+`ctime`  datetime NULL DEFAULT NULL COMMENT '添加人' ,
+`utime`  datetime NULL DEFAULT NULL COMMENT '修改人' ,
+`is_del`  tinyint(4) NULL DEFAULT NULL COMMENT '0表示不删除，1表示删除' ,
+PRIMARY KEY (`kq_mg_id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+ROW_FORMAT=Dynamic
+;
+CREATE TABLE `oa_kaoqing_setting` (
+`kq_st_id`  int(11) NOT NULL AUTO_INCREMENT COMMENT '考勤设置ID' ,
+`d_id`  int(11) NULL DEFAULT NULL COMMENT '部门ID' ,
+`kq_tp_id`  int(11) NULL DEFAULT NULL COMMENT '模板ID' ,
+`latitude`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '经度' ,
+`longitude`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '纬度' ,
+`c_id`  int(11) NULL DEFAULT NULL COMMENT '添加人' ,
+`u_id`  int(11) NULL DEFAULT NULL COMMENT '修改人' ,
+`ctime`  datetime NULL DEFAULT NULL COMMENT '添加时间' ,
+`utime`  datetime NULL DEFAULT NULL COMMENT '修改时间' ,
+PRIMARY KEY (`kq_st_id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+ROW_FORMAT=Dynamic
+;
+CREATE TABLE `oa_kaoqing_tpl` (
+`kq_tp_id`  int(11) NOT NULL AUTO_INCREMENT COMMENT '考勤模板ID' ,
+`kq_tp_name`  varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '模板名称' ,
+`kq_tp_days`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '考勤天数选择' ,
+`kq_tp_st`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '上班开始时间' ,
+`kq_tp_ed`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '下班结束时间' ,
+`is_def`  tinyint(1) NULL DEFAULT NULL COMMENT '1表示默认，0表示不默认' ,
+`c_id`  int(11) NULL DEFAULT NULL COMMENT '添加人ID' ,
+`u_id`  int(11) NULL DEFAULT NULL COMMENT '修改人ID' ,
+`ctime`  datetime NULL DEFAULT NULL COMMENT '添加时间' ,
+`utime`  datetime NULL DEFAULT NULL COMMENT '修改时间' ,
+PRIMARY KEY (`kq_tp_id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+ROW_FORMAT=Dynamic
+;
+CREATE TABLE `oa_qingjia` (
+`oa_qingjia_id`  int(11) NOT NULL AUTO_INCREMENT COMMENT '请假ID' ,
+`staff_id`  int(11) NULL DEFAULT NULL COMMENT '员工ID' ,
+`d_id`  int(11) NULL DEFAULT NULL COMMENT '员工部门' ,
+`shenqing_date`  date NULL DEFAULT NULL COMMENT '申请日期' ,
+`st_time`  datetime NULL DEFAULT NULL COMMENT '开始时间' ,
+`ed_time`  datetime NULL DEFAULT NULL COMMENT '结束时间' ,
+`sh_time`  datetime NULL DEFAULT NULL COMMENT '审核时间' ,
+`type`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '请假类型' ,
+`status`  tinyint(4) NULL DEFAULT NULL COMMENT '状态，0表示待确认，1表示通过，2表示驳回' ,
+`shenhe_id`  int(11) NULL DEFAULT NULL COMMENT '审核人' ,
+`tixing_id`  int(11) NULL DEFAULT NULL COMMENT '提醒人' ,
+`remark`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注' ,
+`c_id`  int(11) NULL DEFAULT NULL COMMENT '添加人' ,
+`u_id`  int(11) NULL DEFAULT NULL COMMENT '修改人' ,
+`ctime`  datetime NULL DEFAULT NULL COMMENT '添加时间' ,
+`utime`  datetime NULL DEFAULT NULL COMMENT '修改时间' ,
+`is_del`  tinyint(4) NULL DEFAULT NULL COMMENT '0表示不删除，1表示删除' ,
+PRIMARY KEY (`oa_qingjia_id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+ROW_FORMAT=Dynamic
+;
+CREATE TABLE `org_company` (
+`company_id`  int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '机构id' ,
+`company_type`  tinyint(3) NOT NULL DEFAULT 0 COMMENT '机构类型-1:中介；2:开发商' ,
+`company_level`  tinyint(3) NOT NULL DEFAULT 0 COMMENT '机构级别\r\n1:青铜会员\r\n2:白银会员\r\n3:黄金会员\r\n4:白金会员\r\n5:荣耀会员\r\n6:至尊会员' ,
+`company_account`  varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '机构账号，用于登录' ,
+`company_title`  varchar(160) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '机构名称' ,
+`logo`  varchar(160) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '机构的logo' ,
+`business_license`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '营业执照' ,
+`tax_license`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '税务登记证' ,
+`certificate_license`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '经营许可证' ,
+`phone`  varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '机构电话' ,
+`tel`  varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '座机' ,
+`email`  varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '邮箱' ,
+`province_id`  int(10) NULL DEFAULT NULL COMMENT '省id' ,
+`province_title`  varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '省名称' ,
+`city_id`  int(10) NULL DEFAULT NULL COMMENT '市id' ,
+`city_title`  varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '市名称' ,
+`district_id`  int(10) NULL DEFAULT NULL COMMENT '区id' ,
+`district_title`  varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '区名称' ,
+`address`  varchar(160) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '详细地址' ,
+`intro`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '机构简介' ,
+`contract_id`  int(11) NULL DEFAULT 0 COMMENT '当前合同id' ,
+`contract_start`  timestamp NULL DEFAULT '0000-00-00 00:00:00' COMMENT '合同起始日期' ,
+`contract_end`  timestamp NULL DEFAULT '0000-00-00 00:00:00' COMMENT '合同截至日期' ,
+`status`  tinyint(3) NOT NULL COMMENT '状态:0:禁用，1:启用 ，2:封禁' ,
+`cid`  int(11) NULL DEFAULT 0 COMMENT '创建人' ,
+`uid`  int(11) NULL DEFAULT 0 COMMENT '更新人' ,
+`ctime`  timestamp NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间' ,
+`utime`  timestamp NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间' ,
+`is_del`  tinyint(3) NULL DEFAULT 0 COMMENT '是否删除（0=否  1=是）' ,
+PRIMARY KEY (`company_id`),
+INDEX `company_id` (`company_id`) USING BTREE
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+ROW_FORMAT=Dynamic
+;
+CREATE TABLE `org_company_contract` (
+`id`  int(11) NOT NULL AUTO_INCREMENT COMMENT '流水' ,
+`company_id`  int(11) NOT NULL COMMENT '机构id' ,
+`contract_level`  tinyint(3) NOT NULL DEFAULT 0 COMMENT '机构签约级别\r\n1:青铜会员\r\n2:白银会员\r\n3:黄金会员\r\n4:白金会员\r\n5:荣耀会员\r\n6:至尊会员' ,
+`contract_money`  decimal(2,0) NOT NULL DEFAULT 0 COMMENT '签约金额' ,
+`contract_start`  timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '合同起始日期' ,
+`contract_end`  timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '合同截至日期' ,
+`contract_personal`  int(10) NOT NULL DEFAULT 0 COMMENT '签约用户数' ,
+`contract_city`  int(10) NOT NULL DEFAULT 0 COMMENT '签约城市' ,
+`contract_barea`  int(10) NOT NULL DEFAULT 0 COMMENT '签约大区数' ,
+`contract_area`  int(10) NOT NULL DEFAULT 0 COMMENT '签约区域数' ,
+`contract_store`  int(10) NOT NULL DEFAULT 0 COMMENT '签约门店数' ,
+`contract_row`  int(10) NOT NULL DEFAULT 0 COMMENT '签约组数' ,
+`cid`  int(11) NULL DEFAULT 0 COMMENT '创建人' ,
+`uid`  int(11) NULL DEFAULT 0 COMMENT '更新人' ,
+`ctime`  timestamp NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间' ,
+`utime`  timestamp NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间' ,
+`is_del`  tinyint(3) NULL DEFAULT 0 COMMENT '是否删除（0=否  1=是）' ,
+PRIMARY KEY (`id`),
+INDEX `org_id` (`company_id`) USING BTREE
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+ROW_FORMAT=Dynamic
+;
+CREATE TABLE `sms_log` (
+`id`  int(11) NOT NULL AUTO_INCREMENT COMMENT '流水' ,
+`send_type`  tinyint(2) NOT NULL COMMENT '发送类型（1：单发；2：群发）' ,
+`sms_type`  tinyint(2) NOT NULL COMMENT '短信类型（1：推送消息；2：验证码；）' ,
+`numbers`  text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '目标号码(多个使用json存储)' ,
+`code`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '验证码' ,
+`content`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '短信内容-验证码时，只存验证码' ,
+`status`  tinyint(2) NOT NULL COMMENT '发送状态' ,
+`ctime`  timestamp NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间' ,
+`utime`  timestamp NULL DEFAULT '0000-00-00 00:00:00' COMMENT '更新时间' ,
+`is_del`  tinyint(3) NULL DEFAULT 0 COMMENT '是否删除（0=否  1=是）' ,
+PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+ROW_FORMAT=Dynamic
+;
+ALTER TABLE `ys_customer_daikan` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `ys_customer_daikan` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `ys_customer_daikan_house` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `ys_customer_daikan_house` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `ys_customer_follow` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `ys_customer_follow` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `ys_customer_house` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `ys_customer_house` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `ys_customer_log` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `u_id`;
+ALTER TABLE `ys_customer_log` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `ctime`;
+ALTER TABLE `ys_customer_tel` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `ys_customer_tel` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_class_customer` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_class_customer` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_class_house` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_class_house` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_class_if` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_class_if` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+CREATE TABLE `zh_con_templet` (
+`con_templet_id`  int(11) NOT NULL AUTO_INCREMENT COMMENT '模板ID' ,
+`con_templet_type`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '模板类新' ,
+`con_templet_content`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+`con_templet_status`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+`con_templet_prefix`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+`con_templet_name`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+`is_verify`  tinyint(1) NULL DEFAULT 1 COMMENT '是否需要审核' ,
+`c_id`  int(11) NULL DEFAULT NULL COMMENT '添加人' ,
+`u_id`  int(11) NULL DEFAULT NULL COMMENT '更新人' ,
+`ctime`  datetime NULL DEFAULT NULL COMMENT '添加时间' ,
+`utime`  datetime NULL DEFAULT NULL COMMENT '更新时间' ,
+`auth_uid`  int(11) NULL DEFAULT NULL COMMENT '用户ID' ,
+`auth_rid`  int(11) NULL DEFAULT NULL COMMENT '组ID' ,
+`auth_sid`  int(11) NULL DEFAULT NULL COMMENT '店ID' ,
+`auth_aid`  int(11) NULL DEFAULT NULL COMMENT '区ID' ,
+`auth_baid`  int(11) NULL DEFAULT NULL COMMENT '大区ID' ,
+`is_del`  tinyint(4) NULL DEFAULT 0 COMMENT '是否删除' ,
+PRIMARY KEY (`con_templet_id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+ROW_FORMAT=Dynamic
+;
+CREATE TABLE `zh_contractlist` (
+`con_id`  int(11) NOT NULL AUTO_INCREMENT COMMENT '合同id' ,
+`bianhao`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '合同编号' ,
+`mingcheng`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '合同名称' ,
+`fy_bianhao`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '房源编号' ,
+`ky_bianhao`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '客源编号' ,
+`fy_khdh`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '房源客户电话' ,
+`ky_khdh`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '客源客户电话' ,
+`fy_khxm`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '房源客户姓名' ,
+`ky_khxm`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '客源客户姓名' ,
+`fy_xb`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '房源性别' ,
+`ky_xb`  varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '客源性别' ,
+`jingjiren`  int(11) NULL DEFAULT 0 COMMENT '经纪人' ,
+`bumen_id`  int(11) NULL DEFAULT 0 COMMENT '部门id' ,
+`zhuangtai`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '状态：进行中，审核中，报废，已签' ,
+`htnr`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '合同内容' ,
+`htqz`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '合同编号前缀' ,
+`c_id`  int(11) NULL DEFAULT NULL COMMENT '添加人' ,
+`u_id`  int(11) NULL DEFAULT NULL COMMENT '更新人' ,
+`ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' ,
+`utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' ,
+`auth_uid`  int(11) NULL DEFAULT 0 COMMENT '用户ID' ,
+`auth_rid`  int(11) NULL DEFAULT 0 COMMENT '组ID' ,
+`auth_sid`  int(11) NULL DEFAULT 0 COMMENT '店ID' ,
+`auth_aid`  int(11) NULL DEFAULT 0 COMMENT '区ID' ,
+`auth_baid`  int(11) NULL DEFAULT 0 COMMENT '大区ID' ,
+`auth_cid`  int(11) NULL DEFAULT NULL COMMENT '公司ID' ,
+`is_del`  tinyint(255) NULL DEFAULT 0 COMMENT '是否删除 0=没有删除  1=删除' ,
+PRIMARY KEY (`con_id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+ROW_FORMAT=Dynamic
+;
+ALTER TABLE `zh_copy` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_copy` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_customer_daikan` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_customer_daikan` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_customer_daikan_house` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_customer_daikan_house` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_customer_follow` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_customer_follow` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_customer_log` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `u_id`;
+ALTER TABLE `zh_customer_log` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `ctime`;
+ALTER TABLE `zh_customer_tel` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_customer_tel` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_customer_xiading` ADD COLUMN `pay_way`  varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '支付方式' AFTER `piaojuhao`;
+ALTER TABLE `zh_customer_xiading` ADD COLUMN `image`  text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '费用凭证图片' AFTER `yujichengjiao`;
+ALTER TABLE `zh_customer_xiading` ADD COLUMN `reject_reason`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '反驳原因' AFTER `x_zhuangtai`;
+ALTER TABLE `zh_customer_xiading` MODIFY COLUMN `x_zhuangtai`  tinyint(1) NULL DEFAULT 0 COMMENT '状态  0 待确认，1 支出，2确认，3退定，4已驳回' AFTER `house_id`;
+ALTER TABLE `zh_customer_xiading` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_customer_xiading` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_depart` ADD COLUMN `company_id`  int(11) NOT NULL DEFAULT 0 COMMENT '所属公司id' AFTER `d_type`;
+ALTER TABLE `zh_district` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_district` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_district_region` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_district_region` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_district_slice` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_district_slice` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+CREATE TABLE `zh_edu` (
+`edu_id`  int(11) NOT NULL AUTO_INCREMENT COMMENT '培训ID' ,
+`edu_c_id`  int(11) NULL DEFAULT NULL COMMENT '培训分类ID' ,
+`edu_title`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '培训标题' ,
+`edu_content`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT '培训内容' ,
+`edu_img`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '图片' ,
+`c_id`  int(11) NULL DEFAULT NULL COMMENT '添加人' ,
+`u_id`  int(11) NULL DEFAULT NULL COMMENT '更新人' ,
+`ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '添加时间' ,
+`utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' ,
+`auth_uid`  int(11) NULL DEFAULT NULL COMMENT '用户ID' ,
+`auth_rid`  int(11) NULL DEFAULT NULL COMMENT '组ID' ,
+`auth_sid`  int(11) NULL DEFAULT NULL COMMENT '店ID' ,
+`auth_aid`  int(11) NULL DEFAULT NULL COMMENT '区ID' ,
+`auth_baid`  int(11) NULL DEFAULT NULL COMMENT '大区ID' ,
+`is_del`  tinyint(4) NULL DEFAULT NULL COMMENT '是否删除' ,
+PRIMARY KEY (`edu_id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+ROW_FORMAT=Dynamic
+;
+CREATE TABLE `zh_edu_category` (
+`edu_c_id`  int(11) NOT NULL AUTO_INCREMENT COMMENT '分类ID' ,
+`edu_c_type`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '分类' ,
+`edu_c_title`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'title' ,
+`edu_c_start`  int(11) NULL DEFAULT NULL COMMENT '开始天数' ,
+`edu_c_end`  int(11) NULL DEFAULT NULL COMMENT '结束天数' ,
+`edu_c_img`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+`auth_cid`  int(11) NULL DEFAULT NULL ,
+`c_id`  int(11) NULL DEFAULT NULL COMMENT '添加人' ,
+`u_id`  int(11) NULL DEFAULT NULL COMMENT '更新人' ,
+`ctime`  datetime NULL DEFAULT NULL COMMENT '添加时间' ,
+`utime`  datetime NULL DEFAULT NULL COMMENT '更新时间' ,
+`auth_uid`  int(11) NULL DEFAULT NULL COMMENT '用户ID' ,
+`auth_rid`  int(11) NULL DEFAULT NULL COMMENT '组ID' ,
+`auth_sid`  int(11) NULL DEFAULT NULL COMMENT '店ID' ,
+`auth_aid`  int(11) NULL DEFAULT NULL COMMENT '区ID' ,
+`auth_baid`  int(11) NULL DEFAULT NULL COMMENT '大区ID' ,
+`is_del`  tinyint(4) NULL DEFAULT NULL COMMENT '是否删除' ,
+PRIMARY KEY (`edu_c_id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+ROW_FORMAT=Dynamic
+;
+CREATE TABLE `zh_edu_file` (
+`edu_file_id`  int(11) NOT NULL AUTO_INCREMENT COMMENT '文件ID' ,
+`edu_id`  int(11) NULL DEFAULT NULL COMMENT '培训ID' ,
+`edu_file_url`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件URL' ,
+`edu_file_name`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '文件名称' ,
+`edu_file_size`  double NULL DEFAULT NULL COMMENT '文件大小' ,
+`c_id`  int(11) NULL DEFAULT NULL COMMENT '添加人' ,
+`u_id`  int(11) NULL DEFAULT NULL COMMENT '更新人' ,
+`ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '添加时间' ,
+`utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' ,
+`auth_uid`  int(11) NULL DEFAULT NULL COMMENT '用户ID' ,
+`auth_rid`  int(11) NULL DEFAULT NULL COMMENT '组ID' ,
+`auth_sid`  int(11) NULL DEFAULT NULL COMMENT '店ID' ,
+`auth_aid`  int(11) NULL DEFAULT NULL COMMENT '区ID' ,
+`auth_baid`  int(11) NULL DEFAULT NULL COMMENT '大区ID' ,
+`is_del`  tinyint(4) NULL DEFAULT NULL COMMENT '是否删除' ,
+PRIMARY KEY (`edu_file_id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
+ROW_FORMAT=Dynamic
+;
+ALTER TABLE `zh_field` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `u_id`;
+ALTER TABLE `zh_field` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `ctime`;
+ALTER TABLE `zh_house` MODIFY COLUMN `is_yaoshi_user`  int(11) NULL DEFAULT 0 COMMENT '得钥匙用户id' AFTER `is_yaoshi`;
+ALTER TABLE `zh_house` MODIFY COLUMN `is_dujia_user`  int(11) NULL DEFAULT 0 COMMENT '委托人' AFTER `is_dujia`;
+ALTER TABLE `zh_house` MODIFY COLUMN `is_images_user`  int(11) NULL DEFAULT 0 COMMENT '图片人' AFTER `is_images`;
+ALTER TABLE `zh_house` MODIFY COLUMN `fengpandaoqi`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '封盘到期时间' AFTER `is_fengpan`;
+ALTER TABLE `zh_house` MODIFY COLUMN `quanyuangenjin`  datetime NULL DEFAULT '0000-00-00 00:00:00' COMMENT '全员跟进时间' AFTER `is_del`;
+ALTER TABLE `zh_house` MODIFY COLUMN `weihurengenjin`  datetime NULL DEFAULT '0000-00-00 00:00:00' COMMENT '维护人跟进时间' AFTER `quanyuangenjin`;
+ALTER TABLE `zh_house` MODIFY COLUMN `daikanshijian`  datetime NULL DEFAULT '0000-00-00 00:00:00' COMMENT '最后带看时间' AFTER `weihurengenjin`;
+ALTER TABLE `zh_house_describe` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '添加时间' AFTER `u_id`;
+ALTER TABLE `zh_house_describe` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_house_followup` MODIFY COLUMN `hf_notify_time`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '通知时间' AFTER `hf_notify_user`;
+ALTER TABLE `zh_house_followup` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '添加时间' AFTER `u_id`;
+ALTER TABLE `zh_house_followup` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_house_img` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_house_img` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_house_jiu` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `u_id`;
+ALTER TABLE `zh_house_jiu` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `ctime`;
+ALTER TABLE `zh_house_key` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `u_id`;
+ALTER TABLE `zh_house_key` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `ctime`;
+ALTER TABLE `zh_house_key_log` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_house_key_log` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_house_log` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `u_id`;
+ALTER TABLE `zh_house_log` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `ctime`;
+ALTER TABLE `zh_house_make` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `u_id`;
+ALTER TABLE `zh_house_make` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `ctime`;
+ALTER TABLE `zh_house_phone` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `u_id`;
+ALTER TABLE `zh_house_phone` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `ctime`;
+ALTER TABLE `zh_house_weituo` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `u_id`;
+ALTER TABLE `zh_house_weituo` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP AFTER `ctime`;
+ALTER TABLE `zh_notify` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '添加时间' AFTER `u_id`;
+ALTER TABLE `zh_notify` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `contract_sn`  varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '合同编号' AFTER `agreement_sn`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `contract_name`  varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '合同名称' AFTER `contract_sn`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `order_owner_commission`  decimal(10,2) NULL DEFAULT 0.00 COMMENT '业主应收佣金' AFTER `order_loan`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `order_customer_commission`  decimal(10,2) NULL DEFAULT 0.00 COMMENT '客户应收佣金' AFTER `order_owner_commission`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `auth_ruid`  int(11) NULL DEFAULT 0 COMMENT '组负责人ID' AFTER `auth_rid`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `auth_suid`  int(11) NULL DEFAULT 0 COMMENT '店负责人ID' AFTER `auth_sid`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `auth_auid`  int(11) NULL DEFAULT 0 COMMENT '区负责人ID' AFTER `auth_aid`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `auth_bauid`  int(11) NULL DEFAULT 0 COMMENT '大区负责人iD' AFTER `auth_baid`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `order_linkage_did`  int(10) NULL DEFAULT 0 COMMENT '联动划成人的部门' AFTER `is_del`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `order_linkage_user`  int(11) NULL DEFAULT 0 COMMENT '联动划成人' AFTER `order_linkage_did`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `order_linkage_username`  varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '联动划成人姓名' AFTER `order_linkage_user`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `order_linkage_per`  tinyint(5) NULL DEFAULT 0 COMMENT '联成划成比例' AFTER `order_linkage_username`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `order_consult_did`  int(10) NULL DEFAULT 0 COMMENT '协商划成人的部门' AFTER `order_linkage_per`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `order_consult_user`  int(11) NULL DEFAULT 0 COMMENT '协商划成人' AFTER `order_consult_did`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `order_consult_username`  varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '协商划成人姓名' AFTER `order_consult_user`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `order_consult_per`  tinyint(5) NULL DEFAULT 0 COMMENT '协商划成人比例' AFTER `order_consult_username`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `order_transfer_id`  int(10) NULL DEFAULT 0 COMMENT '过户流程id' AFTER `order_consult_per`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `order_transfer_process`  varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '过户流程名称' AFTER `order_transfer_id`;
+ALTER TABLE `zh_order_sell` ADD COLUMN `contract_image`  text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '签约值图片' AFTER `order_transfer_process`;
+ALTER TABLE `zh_order_sell` DROP COLUMN `order_commission`;
+CREATE TABLE `zh_order_sell_collection` (
+`collection_id`  int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增id' ,
+`order_id`  int(11) NULL DEFAULT 0 COMMENT '订单id' ,
+`house_id`  int(11) NULL DEFAULT 0 COMMENT '房源id' ,
+`xiading_id`  int(11) NULL DEFAULT 0 COMMENT '下定id' ,
+`xiading_status`  tinyint(5) NULL DEFAULT 0 COMMENT '意向金管理将要变更的状态' ,
+`xiading_contractno`  varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '协议书' ,
+`collection_no`  varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '票据号' ,
+`collection_type`  tinyint(5) NULL DEFAULT 0 COMMENT '费用类型1代收类型2代付类型3意向金' ,
+`collection_purpose`  varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '费用用途' ,
+`collection_way`  varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '支付方式' ,
+`collection_money`  decimal(10,2) NULL DEFAULT 0.00 COMMENT '代收代付金额' ,
+`collection_payer`  tinyint(5) NULL DEFAULT 0 COMMENT '付费人/收取人 1业主2客户' ,
+`collection_day`  date NULL DEFAULT '0000-00-00' COMMENT '收款日期' ,
+`collection_image`  text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '费用凭证图片' ,
+`collection_remark`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '收费备注' ,
+`collection_reason`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '反驳原因' ,
+`collection_status`  tinyint(5) NULL DEFAULT 0 COMMENT '记录状态0未确认1确认2驳回' ,
+`c_id`  int(11) NULL DEFAULT NULL ,
+`u_id`  int(11) NULL DEFAULT NULL ,
+`ctime`  datetime NULL DEFAULT NULL ,
+`utime`  datetime NULL DEFAULT NULL ,
+`is_del`  tinyint(255) NULL DEFAULT NULL ,
+PRIMARY KEY (`collection_id`),
+INDEX `order_id` (`order_id`) USING BTREE
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci
+ROW_FORMAT=Dynamic
+;
+ALTER TABLE `zh_order_sell_commission` ENGINE=InnoDB,
+DEFAULT CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci;
+ALTER TABLE `zh_order_sell_commission` ADD COLUMN `depart_id`  int(11) NULL DEFAULT 0 COMMENT '部门id' AFTER `order_id`;
+ALTER TABLE `zh_order_sell_commission` ADD COLUMN `depart_name`  varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '部门名称' AFTER `depart_id`;
+ALTER TABLE `zh_order_sell_commission` ADD COLUMN `user_job`  varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '用户职位' AFTER `depart_name`;
+ALTER TABLE `zh_order_sell_commission` ADD COLUMN `user_id`  int(11) NULL DEFAULT NULL COMMENT '用户id' AFTER `user_job`;
+ALTER TABLE `zh_order_sell_commission` ADD COLUMN `user_name`  varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '用户名称' AFTER `user_id`;
+ALTER TABLE `zh_order_sell_commission` ADD COLUMN `reason`  varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '参与分成原因' AFTER `user_name`;
+ALTER TABLE `zh_order_sell_commission` ADD COLUMN `divide_per`  int(10) NULL DEFAULT 0 COMMENT '分成比例' AFTER `reason`;
+ALTER TABLE `zh_order_sell_commission` MODIFY COLUMN `oc_id`  int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增id' FIRST ;
+ALTER TABLE `zh_order_sell_commission` MODIFY COLUMN `order_id`  int(11) NULL DEFAULT 0 COMMENT '订单id' AFTER `oc_id`;
+ALTER TABLE `zh_order_sell_commission` DROP COLUMN `type`;
+ALTER TABLE `zh_order_sell_commission` DROP COLUMN `gangwei`;
+ALTER TABLE `zh_order_sell_commission` DROP COLUMN `yuangong`;
+ALTER TABLE `zh_order_sell_commission` DROP COLUMN `bili`;
+ALTER TABLE `zh_order_sell_commission` DROP COLUMN `jine`;
+CREATE INDEX `order_id` ON `zh_order_sell_commission`(`order_id`) USING BTREE ;
+CREATE TABLE `zh_order_sell_cost` (
+`cost_id`  int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增id' ,
+`order_id`  int(11) NOT NULL DEFAULT 0 COMMENT '订单id' ,
+`cost_type`  tinyint(5) NULL DEFAULT 0 COMMENT '费用类型1佣金类型2杂项类型3折佣类型' ,
+`cost_purpose`  tinyint(5) NULL DEFAULT 0 COMMENT '费用用途1收入2支出' ,
+`cost_project`  varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '费用项目' ,
+`cost_payer`  tinyint(5) NULL DEFAULT 0 COMMENT '缴费人1业主2客户3财务' ,
+`cost_way`  varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '支付方式' ,
+`cost_money`  decimal(10,2) NULL DEFAULT 0.00 COMMENT '收取金额' ,
+`cost_day`  date NULL DEFAULT '0000-00-00' COMMENT '收款日期' ,
+`cost_image`  text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '费用凭据图片' ,
+`cost_remark`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '收费备注' ,
+`cost_reason`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '反驳原因' ,
+`cost_status`  tinyint(5) NULL DEFAULT 0 COMMENT '记录状态0未确认1确认2驳回' ,
+`c_id`  int(11) NULL DEFAULT NULL ,
+`u_id`  int(11) NULL DEFAULT NULL ,
+`ctime`  datetime NULL DEFAULT NULL ,
+`utime`  datetime NULL DEFAULT NULL ,
+`is_del`  tinyint(255) NULL DEFAULT NULL ,
+PRIMARY KEY (`cost_id`),
+INDEX `order_id` (`order_id`) USING BTREE
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci
+ROW_FORMAT=Dynamic
+;
+CREATE TABLE `zh_order_sell_divide` (
+`divide_id`  int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增id' ,
+`order_id`  int(11) NOT NULL DEFAULT 0 COMMENT '订单id' ,
+`commission_id`  int(11) NULL DEFAULT 0 COMMENT '对应的分成用户比例' ,
+`cost_id`  tinyint(5) NULL DEFAULT 0 COMMENT '佣金费用记录id' ,
+`divide_money`  decimal(10,2) NULL DEFAULT 0.00 COMMENT '费用金额' ,
+`c_id`  int(11) NULL DEFAULT NULL ,
+`u_id`  int(11) NULL DEFAULT NULL ,
+`ctime`  datetime NULL DEFAULT NULL ,
+`utime`  datetime NULL DEFAULT NULL ,
+`is_del`  tinyint(255) NULL DEFAULT NULL ,
+PRIMARY KEY (`divide_id`),
+INDEX `order_id` (`order_id`) USING BTREE
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci
+ROW_FORMAT=Dynamic
+;
+ALTER TABLE `zh_order_sell_followup` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '添加时间' AFTER `u_id`;
+ALTER TABLE `zh_order_sell_followup` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_order_sell_img` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_order_sell_img` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+CREATE TABLE `zh_order_sell_procedure` (
+`procedure_id`  int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增id' ,
+`order_id`  int(11) NOT NULL DEFAULT 0 COMMENT '订单id' ,
+`procedure_name`  varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '流程名称' ,
+`procedure_expect_day`  date NULL DEFAULT '0000-00-00' COMMENT '流程预计时间' ,
+`procedure_finish_day`  date NULL DEFAULT '0000-00-00' COMMENT '完成时间' ,
+`procedure_status`  tinyint(5) NULL DEFAULT 0 COMMENT '记录状态0未完成1已完成' ,
+`c_id`  int(11) NULL DEFAULT NULL ,
+`u_id`  int(11) NULL DEFAULT NULL ,
+`ctime`  datetime NULL DEFAULT NULL ,
+`utime`  datetime NULL DEFAULT NULL ,
+`is_del`  tinyint(255) NULL DEFAULT NULL ,
+PRIMARY KEY (`procedure_id`),
+INDEX `order_id` (`order_id`) USING BTREE
+)
+ENGINE=InnoDB
+DEFAULT CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci
+ROW_FORMAT=Dynamic
+;
+ALTER TABLE `zh_order_sell_tel` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_order_sell_tel` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_role` ADD COLUMN `company_id`  int(11) NOT NULL DEFAULT 0 COMMENT '所属公司id' AFTER `role_type`;
+ALTER TABLE `zh_school` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_school` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+ALTER TABLE `zh_school_district` MODIFY COLUMN `ctime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' AFTER `u_id`;
+ALTER TABLE `zh_school_district` MODIFY COLUMN `utime`  datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间' AFTER `ctime`;
+CREATE TABLE `zh_setting_finance` (
+`finance_id`  int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '普通配置ID' ,
+`finance_shorthand`  varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '普通配置简写，英文' ,
+`finance_name`  varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '普通配置名' ,
+`finance_desp`  text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '普通配置描述JSON格式' ,
+`ctime`  datetime NULL DEFAULT NULL COMMENT '添加时间' ,
+`utime`  datetime NULL DEFAULT NULL COMMENT '修改时间' ,
+PRIMARY KEY (`finance_id`)
+)
+ENGINE=MyISAM
+DEFAULT CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci
+CHECKSUM=0
+ROW_FORMAT=Dynamic
+DELAY_KEY_WRITE=0
+;
+CREATE TABLE `zh_setting_transfer` (
+`transfer_id`  int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '普通配置ID' ,
+`transfer_name`  varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '' COMMENT '过户流程名称' ,
+`transfer_owner_materials`  text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '业主材料明细(JSON格式)' ,
+`transfer_customer_materials`  text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '客户材料明细(JSON格式)' ,
+`transfer_process`  text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '过户流程配置(JSON格式)' ,
+`ctime`  datetime NULL DEFAULT NULL COMMENT '添加时间' ,
+`utime`  datetime NULL DEFAULT NULL COMMENT '修改时间' ,
+PRIMARY KEY (`transfer_id`)
+)
+ENGINE=MyISAM
+DEFAULT CHARACTER SET=utf8mb4 COLLATE=utf8mb4_general_ci
+CHECKSUM=0
+ROW_FORMAT=Dynamic
+DELAY_KEY_WRITE=0
+;
+ALTER TABLE `zh_user` ADD COLUMN `company_id`  int(11) NOT NULL DEFAULT 0 COMMENT '所属公司id' AFTER `u_sex`;
+ALTER TABLE `zh_user` ADD COLUMN `jibengongzi`  double(10,2) NULL DEFAULT 0.00 COMMENT '基本工资(元)' AFTER `u_status`;
+ALTER TABLE `zh_user` ADD COLUMN `wuxiangeren`  double(10,2) NULL DEFAULT 0.00 COMMENT '五险(个人)' AFTER `jibengongzi`;
+ALTER TABLE `zh_user` ADD COLUMN `wuxianyijingeren`  double(10,2) NULL DEFAULT 0.00 COMMENT '五险一金(个人)' AFTER `wuxiangeren`;
+ALTER TABLE `zh_user` ADD COLUMN `ticheng_id`  int(11) NULL DEFAULT 0 COMMENT '提成id' AFTER `wuxianyijingeren`;
+ALTER TABLE `zh_user` ADD COLUMN `ticheng`  varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '提成层级' AFTER `ticheng_id`;
+ALTER TABLE `zh_user` ADD COLUMN `fuzerenticheng_id`  int(11) NULL DEFAULT 0 COMMENT '负责人提成id' AFTER `ticheng`;
+ALTER TABLE `zh_user` ADD COLUMN `fuzerenticheng`  varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '0' COMMENT '负责人提成层级' AFTER `fuzerenticheng_id`;
+ALTER TABLE `zh_user` ADD COLUMN `tichengleixing`  tinyint(1) NULL DEFAULT 0 COMMENT '提成类型（1经纪人 2负责人）' AFTER `fuzerenticheng`;
+DROP TABLE `zh_customer_log_copy`;
+DROP TABLE `zh_customer_xiading_copy`;
+DROP TABLE `zh_order_rent`;
+DROP TABLE `zh_order_rent_commission`;
+DROP TABLE `zh_order_rent_followup`;
+DROP TABLE `zh_order_rent_img`;
+DROP TABLE `zh_order_rent_tel`;
+DROP TABLE `zh_purview1`;
+SET FOREIGN_KEY_CHECKS=1;
+
+
+
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('190', '获取客源', '获取客源', 'ordersell/customerlist', '3', '0', '1', 'fa fa-search', '53', '3', '1', '1', '2018-01-25 10:08:29', '2018-01-29 09:22:39', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('191', '获取客源', '获取客源', 'ordersell/customerlist', '3', '0', '1', 'fa fa-search', '62', '3', '1', '1', '2018-01-25 10:08:29', '2018-01-29 09:22:39', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('192', '获取客源', '获取客源', 'ordersell/customerlist', '3', '0', '1', 'fa fa-search', '71', '3', '1', '1', '2018-01-25 10:08:29', '2018-01-29 09:22:39', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('193', '考勤设置', '考勤设置', 'oakaoqin/index', '1', '1', '1', 'fa fa-search', '0', '7', '1', '1', '2018-07-16 11:07:03', '2018-07-16 11:07:05', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('194', '考勤模板', '考勤模板', 'oakaoqingtpl/getlist', '1', '1', '1', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('195', '模板新增', '模板新增', 'oakaoqingtpl/add', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('196', '模板编辑', '模板编辑', 'oakaoqingtpl/edit', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('197', '模板删除', '模板删除', 'oakaoqingtpl/del', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('198', '考勤设置', '考勤设置', 'oakaoqingsetting/getlist', '1', '1', '1', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('199', '考勤初始化', '考勤初始化', 'oakaoqingsetting/update', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('200', '考勤管理', '考勤管理', 'oakaoqingguanli/getlist', '1', '1', '1', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('201', '考勤管理新增', '考勤管理新增', 'oakaoqingguanli/update', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('202', '考勤管理修改', '考勤管理修改', 'oakaoqingguanli/edit', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('203', '考勤打卡', '考勤打卡', 'oakaoqingguanli/daka', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('204', '考勤模板查询', '考勤模板查询', 'oakaoqingguanli/getTpl', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('205', '请假管理', '请假管理', 'oaqingjia/getlist', '1', '1', '1', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('206', '请假新增', '请假新增', 'oaqingjia/update', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('207', '请假编辑', '请假编辑', 'oaqingjia/edit', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('208', '请假删除', '请假删除', 'oaqingjia/del', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('209', '请假审核', '请假审核', 'oaqingjia/shenhe', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('210', '考勤统计', '考勤统计', 'oakaoqingtongji/getlist', '1', '1', '1', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('211', '考勤导出', '考勤导出', 'oakaoqingtongji/export', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('212', '人事档案', '人事档案', 'oahrstaff/getlist', '1', '1', '1', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('213', '档案新增', '档案新增', 'oahrstaff/update', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('214', '档案编辑', '档案编辑', 'oahrstaff/edit', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('215', '档案删除', '档案删除', 'oahrstaff/del', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('216', '档案审核', '档案审核', 'oahrstaff/shenhe', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('217', '变动记录', '变动记录', 'oahrbiandong/getlist', '1', '1', '1', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('218', '变动记录新增', '变动记录新增', 'oahrbiandong/update', '1', '1', '0', 'fa fa-search', '193', '7', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('219', '财务平台', '财务平台', 'caiwu/index', '1', '1', '1', 'fa fa-search', '0', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('220', '分成配置', '分成配置', 'settingfinance/getlist', '1', '1', '1', 'fa fa-search', '219', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('221', '分成配置详情', '分成配置详情', 'settingfinance/getchildlist', '1', '1', '0', 'fa fa-search', '219', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('222', '分成配置新增', '分成配置新增', 'settingfinance/add', '1', '1', '0', 'fa fa-search', '219', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('223', '分成配置编辑', '分成配置编辑', 'settingfinance/edit', '1', '1', '0', 'fa fa-search', '219', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('224', '分成配置删除', '分成配置删除', 'settingfinance/del', '1', '1', '0', 'fa fa-search', '219', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('225', '过户流程', '过户流程', 'settingtransfer/getlist', '1', '1', '1', 'fa fa-search', '219', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('226', '获取详情', '获取详情', 'settingtransfer/detail', '1', '1', '0', 'fa fa-search', '219', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('227', '流程添加', '流程添加', 'settingtransfer/add', '1', '1', '0', 'fa fa-search', '219', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('228', '流程编辑', '流程编辑', 'settingtransfer/edit', '1', '1', '0', 'fa fa-search', '219', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('229', '流程删除', '流程删除', 'settingtransfer/del', '1', '1', '0', 'fa fa-search', '219', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('230', '佣金管理', '佣金管理', 'financecommission/getlist?type=1', '1', '1', '1', 'fa fa-search', '219', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('231', '确认佣金', '确认佣金', 'financecommission/surestatus', '1', '1', '0', 'fa fa-search', '219', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('232', '驳回佣金', '驳回佣金', 'financecommission/rejectstatus', '1', '1', '0', 'fa fa-search', '219', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('233', '杂项收入', '杂项收入', 'financecommission/getlist?type=2', '1', '1', '1', 'fa fa-search', '219', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('234', '代收付款', '代收付款', 'financecollection/getlist', '1', '1', '1', 'fa fa-search', '219', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('235', '代收付款参数', '代收付款参数', 'financecollection/getsetting', '1', '1', '0', 'fa fa-search', '219', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('236', '代收付款状态', '代收付款状态', 'financecollection/updatestatus', '1', '1', '0', 'fa fa-search', '219', '8', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('237', '工资配置', '工资配置', 'gongzi/index', '1', '1', '1', 'fa fa-search', '0', '9', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('238', '提成配置', '提成配置', 'salary_config/index', '1', '1', '1', 'fa fa-search', '237', '9', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('239', '提成配置添加', '提成配置添加', 'salary_config/add', '1', '1', '0', 'fa fa-search', '237', '9', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('240', '提成配置删除', '提成配置删除', 'salary_config/del', '1', '1', '0', 'fa fa-search', '237', '9', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('241', '薪酬变动', '薪酬变动', 'salary_config_biandong/index', '1', '1', '1', 'fa fa-search', '237', '9', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('242', '薪酬变动新增', '薪酬变动新增', 'salary_config_biandong/add', '1', '1', '0', 'fa fa-search', '237', '9', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('243', '薪酬变动编辑', '薪酬变动编辑', 'salary_config_biandong/edit', '1', '1', '0', 'fa fa-search', '237', '9', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('244', '薪酬变动删除', '薪酬变动删除', 'salary_config_biandong/del', '1', '1', '0', 'fa fa-search', '237', '9', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('245', '提成工资', '提成工资', 'usergongzi/getindex', '1', '1', '1', 'fa fa-search', '237', '9', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('246', '提成工资设置', '提成工资设置', 'usergongzi/edit', '1', '1', '0', 'fa fa-search', '237', '9', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('247', '批量设置', '批量设置', 'usergongzi/pl_sz', '1', '1', '0', 'fa fa-search', '237', '9', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('248', '提成工资参数', '提成工资参数', 'usergongzi/getsetting', '1', '1', '0', 'fa fa-search', '237', '9', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('249', '薪酬统计', '薪酬统计', 'gongzi/index', '1', '1', '1', 'fa fa-search', '237', '9', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('250', '工资生成', '工资生成', 'gongzi/add', '1', '1', '0', 'fa fa-search', '237', '9', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('251', '工资重算', '工资重算', 'gongzi/rsedit', '1', '1', '0', 'fa fa-search', '237', '9', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('252', '工资明细', '工资明细', 'gongzi/getmingxi', '1', '1', '0', 'fa fa-search', '237', '9', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('253', '工资导出', '工资导出', 'gongzi/export', '1', '1', '0', 'fa fa-search', '237', '9', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('254', '签约值图片', '签约值图片', 'ordersell/contractimage', '3', '1', '0', 'fa fa-search', '53', '3', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('255', '添加佣金记录', '添加佣金记录', 'ordersell/addcommission', '3', '1', '0', 'fa fa-search', '53', '3', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('256', '添加代付款记录', '添加代付款记录', 'ordersell/addcollection', '3', '1', '0', 'fa fa-search', '53', '3', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('257', '成交进度调整', '成交进度调整', 'ordersell/addprocedure', '3', '1', '0', 'fa fa-search', '53', '3', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('258', '保存成交图片', '保存成交图片', 'ordersell/imgupload', '3', '1', '0', 'fa fa-search', '53', '3', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('259', '合同模板管理', '合同模板管理', 'con_templet/getindex', '1', '1', '1', 'fa fa-search', '0', '10', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('260', '合同模板管理', '合同模板管理', 'con_templet/getindex', '1', '1', '1', 'fa fa-search', '259', '1', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('261', '合同列表', '合同列表', 'contract/getindex', '1', '1', '1', 'fa fa-search', '259', '1', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('262', '房源跟进', '房源跟进', 'house/genjin', '3', '1', '1', 'fa fa-search', '0', '1', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('263', '客源跟进', '客源跟进', 'customer_follow/genjin', '3', '1', '1', 'fa fa-search', '0', '1', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('264', '房源带看', '房源带看', 'customer_daikan/daikan1', '3', '1', '1', 'fa fa-search', '0', '1', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('265', '客源带看', '客源带看', 'customer_daikan/daikan2', '3', '1', '1', 'fa fa-search', '0', '1', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('266', '房源跟进列表', '房源跟进列表', 'house/getfollowups', '3', '1', '1', 'fa fa-search', '262', '1', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('267', '客源跟进列表', '客源跟进列表', 'customer_follow/getindex', '3', '1', '1', 'fa fa-search', '263', '1', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('268', '房源带看列表', '房源带看列表', 'customer_daikan/getindex?type=h', '3', '1', '1', 'fa fa-search', '264', '1', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+INSERT INTO `zhenghong`.`zh_purview` (`p_id`, `p_name`, `p_desp`, `p_url`, `system_type`, `p_type`, `is_auth`, `p_ico`, `p_pid`, `sort`, `cid`, `uid`, `ctime`, `utime`, `is_del`) VALUES ('269', '客源带看列表', '客源带看列表', 'customer_daikan/getindex?type=c', '3', '1', '1', 'fa fa-search', '265', '1', '1', '1', '0000-00-00 00:00:00', '0000-00-00 00:00:00', '0');
+
+
+INSERT INTO `zh_setting_juece` ( `jsetting_shorthand`, `jsetting_type`, `jsetting_name`, `jsetting_desp`, `val_type`, `val`, `ctime`, `utime`) VALUES ( 'weituoshixiaoshenhe', '房源', '委托失效修改需要审核', '修改委托失效{$val}审核', 'select;1:需要;2:不需要', '1', '2018-04-10 09:57:11', '2018-04-10 09:57:14');
+INSERT INTO `zh_setting_juece` ( `jsetting_shorthand`, `jsetting_type`, `jsetting_name`, `jsetting_desp`, `val_type`, `val`, `ctime`, `utime`) VALUES ( 'weituo_status_verify_user', '委托', '委托失效审核人', '委托失效由{$val}主管审核', 'select;1:本组;2:本店;3:本区;4:本大区;', '1', '2018-04-20 17:22:04', '2018-04-20 17:22:07');
+INSERT INTO `zh_setting_base` (`base_id`, `base_shorthand`, `base_name`, `base_desp`, `ctime`, `utime`) VALUES ('1097', 'fangyuanchexiaoyuanyin', '房源-撤单原因', '[{\"child_id\":\"1533016963-17558\",\"child_name\":\"\\u623f\\u6e90\\u5df2\\u552e\"},{\"child_id\":\"1533016999-30612\",\"child_name\":\"\\u623f\\u6e90\\u5df2\\u79df\"}]', '2018-07-31 06:01:22', '2018-07-31 06:03:19');
+INSERT INTO `zh_setting_base` ( `base_shorthand`, `base_name`, `base_desp`, `ctime`, `utime`) VALUES ( 'weituo_invalid_reason', '委托-失效原因', '[{\"child_id\":\"1533007412-3590\",\"child_name\":\"\\u6210\\u4ea4\"},{\"child_id\":\"1533007422-17664\",\"child_name\":\"\\u4ed6\\u552e\"},{\"child_id\":\"1533007430-14372\",\"child_name\":\"\\u4ed6\\u79df\"}]', '2018-07-31 03:22:16', '2018-07-31 03:23:50');
+INSERT INTO `zh_setting_juece` ( `jsetting_shorthand`, `jsetting_type`, `jsetting_name`, `jsetting_desp`, `val_type`, `val`, `ctime`, `utime`) VALUES ( 'online_show_num', '房源', '分享外网数量', '分享外网可分享{$val}个房源', 'text;', '10', '2018-04-20 17:22:04', '2018-04-20 17:22:07');
+
+

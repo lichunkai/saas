@@ -1,0 +1,32 @@
+修改表
+zh_house  加house_uuid    添加customer_u_uuid索引
+zh_customer  加customer_uuid   添加house_u_uuid索引
+zh_user  加u_uuid   添加u_uuid索引
+org_wecher_user  加uuid  添加uuid索引
+
+**********************************************************************************************************************************************
+
+zh_verify v_service_id  int(11) 变成 varchar(50)
+zh_house_followup house_id int(11) 变成 varchar(50)
+zh_house_log house_id int(11) 变成 varchar(50)
+
+zh_house_phone house_id int(11) 变成 varchar(50)
+ALTER TABLE `zh_house_phone`
+MODIFY COLUMN `house_id`  varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '房源uuid' AFTER `hp_id`;
+
+zh_house_weituo house_id int(11) 变成 varchar(50)
+zh_house_key house_id int(11) 变成 varchar(50)
+zh_house_describe  house_id int(11) 变成 varchar(50)
+zh_house_cooperation house_id int(11) 变成 varchar(50)
+
+
+*****************************************************************************************************************************************************
+
+zh_customer_log customer_id int(11) 变成  customer_uuid   varchar(50) 添加customer_u_uuid索引
+zh_customer_tel customer_id int(11) 变成  customer_uuid varchar(50)     添加customer_u_uuid索引
+zh_customer_daikan customer_id int(11) 变成  customer_uuid varchar(50)    添加customer_u_uuid索引
+zh_customer_daikan_house house_id int(11)   变成   customer_uuid varchar(50)    添加customer_u_uuid索引
+zh_customer_follow customer_id int(11)   变成   customer_uuid varchar(50)
+zh_customer_xiading customer_id int(11)   变成   customer_uuid varchar(50)    添加customer_u_uuid索引
+
+*************************************************************************************************************************************************
